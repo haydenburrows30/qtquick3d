@@ -2,10 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import QtQuick.Window
-import QtCharts
 import QtQuick3D
-
-import "."
 
 Window {
     id: window
@@ -15,7 +12,6 @@ Window {
     title: qsTr("3D Cube Demo")
     color: "#f0f0f0"
 
-    // Create a 3D view to contain our scene
     View3D {
         id: view
         anchors.top: parent.top
@@ -35,9 +31,11 @@ Window {
         PerspectiveCamera {
             id: camera
             z: 350
+            clipFar: 2000
+            clipNear: 1
+            fieldOfView: 45
         }
 
-        // Add some lighting
         DirectionalLight {
             id: directionalLight
             color: Qt.rgba(1.0, 1.0, 1.0, 1.0)
@@ -47,8 +45,7 @@ Window {
             ambientColor: Qt.rgba(0.3, 0.3, 0.3, 1.0)
             brightness: 1.0
         }
-        
-        // Add a point light for better visibility
+
         PointLight {
             position: Qt.vector3d(0, 100, 100)
             color: Qt.rgba(0.9, 0.9, 1.0, 1.0)
@@ -72,12 +69,12 @@ Window {
                 eulerRotation.x: 30
             }
             
-            // Instead of direct binding, use a function to update rotation
+            // update rotation
             function updateRotation() {
                 eulerRotation = Qt.vector3d(cubeRotationX.value, cubeRotationY.value, cubeRotationZ.value);
             }
             
-            // Connect to slider changes
+            // slider changes
             Connections {
                 target: cubeRotationX
                 function onValueChanged() { cubeNode.updateRotation() }
@@ -93,7 +90,7 @@ Window {
                 function onValueChanged() { cubeNode.updateRotation() }
             }
 
-            // Animate the cube's rotation with more complex animation
+            // Animate cube's rotation
             ParallelAnimation {
                 id: cubeAnimation
                 running: autoRotateCheckBox.checked
@@ -109,7 +106,7 @@ Window {
                     easing.type: Easing.InOutQuad
                 }
                 
-                // X-axis gentle wobble for more interesting motion
+                // X-axis gentle wobble
                 SequentialAnimation {
                     loops: Animation.Infinite
                     NumberAnimation {
@@ -137,7 +134,6 @@ Window {
             }
         }
 
-        // Mouse area for interactive rotation
         MouseArea {
             id: mouseArea
             anchors.fill: parent
@@ -215,7 +211,7 @@ Window {
                 }
             }
             
-            // Add a camera distance slider
+            // Camera distance slider
             RowLayout {
                 Text { text: "Camera Distance: " + cameraDistanceSlider.value.toFixed(0); width: 120 }
                 Slider {
@@ -255,7 +251,7 @@ Window {
                         cubeRotationY.value = 0
                         cubeRotationZ.value = 0
                         
-                        // Make sure rotation is updated
+                        // rotation updated
                         cubeNode.updateRotation()
                     }
                 }
@@ -263,7 +259,7 @@ Window {
         }
     }
     
-    // Add a Z value for rotation - will be used if needed
+    // Z value for rotation
     QtObject {
         id: cubeRotationZ
         property real value: 0
